@@ -1,11 +1,8 @@
-#' Biconjugate Gradient method
+#' Chebyshev Method
 #'
-#' Biconjugate Gradient(BiCG) method is a modification of Conjugate Gradient for nonsymmetric systems using
-#' evaluations with respect to \eqn{A^T} as well as \eqn{A} in matrix-vector multiplications.
-#' For an overdetermined system where \code{nrow(A)>ncol(A)},
-#' it is automatically transformed to the normal equation. Underdetermined system -
-#' \code{nrow(A)<ncol(A)} - is not supported. Preconditioning matrix \eqn{M}, in theory, should be symmetric and positive definite
-#' with fast computability for inverse, though it is not limited until the solver level.
+#' Chebyshev method - also known as Chebyshev iteration - avoids computation of inner product,
+#' enabling distributed-memory computation to be more efficient at the cost of requiring
+#' a priori knowledge on the range of spectrum for matrix \code{A}.
 #'
 #' @param A an \code{(m-by-n)} dense or sparse matrix. See also \code{\link[Matrix]{sparseMatrix}}.
 #' @param B a vector of length \code{m} or an \code{(m-by-k)} matrix (dense or sparse) for solving \code{k} systems simultaneously.
@@ -13,6 +10,7 @@
 #' @param reltol tolerance level for stopping iterations.
 #' @param maxiter maximum number of iterations allowed.
 #' @param preconditioner an \code{(n-by-n)} preconditioning matrix; default is an identity matrix.
+#' @param adjsym a logical; \code{TRUE} to symmetrize the system by transforming the system into normal equation, \code{FALSE} otherwise.
 #' @param verbose a logical; \code{TRUE} to show progress of computation.
 #'
 #' @return a named list containing \describe{
@@ -27,25 +25,24 @@
 #' x = rnorm(5)
 #' b = A%*%x
 #'
-#' out1 = lsolve.cg(A,b)
-#' out2 = lsolve.bicg(A,b)
-#' matout = cbind(matrix(x),out1$x, out2$x);
-#' colnames(matout) = c("true x","CG result", "BiCG result")
+#' out1 = lsolve.sor(A,b,w=0.5)
+#' out2 = lsolve.cheby(A,b)
+#' matout = cbind(x, out1$x, out2$x);
+#' colnames(matout) = c("original x","SOR result", "Chebyshev result")
 #' print(matout)
-#' @references Fletcher, R. (1976) \emph{Conjugate gradient methods for indefinite systems}, Numerical Analysis, Vol.506:73-89.
-#' @references Voevodin, V. (1983) \emph{The problem of non-self-adjoint generalization of the
-#' conjugate gradient method is closed}, U.S.S.R. Comput. Maths. and Math. Physics., Vol.23:143-144.
-#' @rdname krylov_BICG
+#'
+#' @references Gutknecht, M. and Rollin, S. (2002) \emph{The Chebyshev iteration revisited}. Parallel Computing, Vol.28(2):263-283.
+#' @rdname krylov_CHEBY
 #' @export
-lsolve.bicg <- function(A,B,xinit=NA,reltol=1e-5,maxiter=10000,
-                        preconditioner=diag(ncol(A)),verbose=TRUE){
+lsolve.cheby <- function(A,B,xinit=NA,reltol=1e-5,maxiter=10000,
+                      preconditioner=diag(ncol(A)),adjsym=TRUE,verbose=TRUE){
   ###########################################################################
   # Step 0. Initialization
   if (verbose){
-    message("* lsolve.bicg : Initialiszed.")
+    message("* lsolve.cheby : Initialiszed.")
   }
   if (any(is.na(A))||any(is.infinite(A))||any(is.na(B))||any(is.infinite(B))){
-    stop("* lsolve.bicg : no NA or Inf values allowed.")
+    stop("* lsolve.cheby : no NA or Inf values allowed.")
   }
   sparseformats = c("dgCMatrix","dtCMatrix","dsCMatrix")
   if ((class(A)%in%sparseformats)||(class(B)%in%sparseformats)||(class(preconditioner)%in%sparseformats)){
@@ -68,7 +65,7 @@ lsolve.bicg <- function(A,B,xinit=NA,reltol=1e-5,maxiter=10000,
     xinit = matrix(rnorm(ncol(A)))
   } else {
     if (length(xinit)!=ncol(A)){
-      stop("* lsolve.bicg : 'xinit' has invalid size.")
+      stop("* lsolve.cheby : 'xinit' has invalid size.")
     }
     xinit = matrix(xinit)
   }
@@ -76,19 +73,19 @@ lsolve.bicg <- function(A,B,xinit=NA,reltol=1e-5,maxiter=10000,
   # Step 1. Preprocessing
   # 1-1. Neither NA nor Inf allowed.
   if (any(is.infinite(A))||any(is.na(A))||any(is.infinite(B))||any(is.na(B))){
-    stop("* lsolve.bicg : no NA, Inf, -Inf values are allowed.")
+    stop("* lsolve.cheby : no NA, Inf, -Inf values are allowed.")
   }
   # 1-2. Size Argument
   m = nrow(A)
   if (is.vector(B)){
     mB = length(B)
     if (m!=mB){
-      stop("* lsolve.bicg : a vector B should have a length of nrow(A).")
+      stop("* lsolve.cheby : a vector B should have a length of nrow(A).")
     }
   } else {
     mB = nrow(B)
     if (m!=mB){
-      stop("* lsolve.bicg : an input matrix B should have the same number of rows from A.")
+      stop("* lsolve.cheby : an input matrix B should have the same number of rows from A.")
     }
   }
   if (is.vector(B)){
@@ -99,68 +96,79 @@ lsolve.bicg <- function(A,B,xinit=NA,reltol=1e-5,maxiter=10000,
     B = t(A)%*%B
     A = t(A)%*%A
   } else if (m < ncol(A)){ ## Case 2. Underdetermined
-    stop("* lsolve.bicg : underdetermined case is not supported.")
+    stop("* lsolve.cheby : underdetermined case is not supported.")
+  } else {                 ## Case 3. Square Size
+    if (norm(abs(t(A)-A),"f")>1e-10){
+      if (verbose){
+        message("* lsolve.cheby : A may not be symmetric.")
+      }
+      if (adjsym){
+        B = t(A)%*%B
+        A = t(A)%*%A
+        if (verbose){
+          message("* lsolve.cheby : making it normal equation form via 'adjsym' flag.")
+        }
+      }
+    }
   }
   # 1-4. Preconditioner : only valid for square case
   if (!all.equal(dim(A),dim(preconditioner))){
-    stop("* lsolve.bicg : Preconditioner is a size-matching.")
+    stop("* lsolve.cheby : Preconditioner is a size-matching.")
   }
-  if (verbose){message("* lsolve.bicg : preprocessing finished ...")}
+  if (verbose){message("* lsolve.cheby : preprocessing finished ...")}
   ###########################################################################
   # Step 2. Main Computation
+  eigs = solve(preconditioner, A)
+  eigsdec = eigen(eigs, only.values = TRUE)
+  eigmax  = max(eigsdec$values)
+  eigmin  = min(eigsdec$values)
+
   ncolB = ncol(B)
   if (ncolB==1){
     if (!sparseflag){
       vecB = as.vector(B)
-      res = linsolve.bicg.single(A,vecB,xinit,reltol,maxiter,preconditioner)
+      res = linsolve.cheby.single(A,vecB,xinit,reltol,maxiter,preconditioner,eigmax,eigmin)
     } else {
       vecB = B
-      res = linsolve.bicg.single.sparse(A,vecB,xinit,reltol,maxiter,preconditioner)
+      res = linsolve.cheby.single.sparse(A,vecB,xinit,reltol,maxiter,preconditioner,eigmax,eigmin)
     }
   } else {
     x      = array(0,c(ncol(A),ncolB))
     iter   = array(0,c(1,ncolB))
-    errors1 = list()
-    errors2 = list()
+    errors = list()
     for (i in 1:ncolB){
       if (!sparseflag){
         vecB = as.vector(B[,i])
-        tmpres = linsolve.bicg.single(A,vecB,xinit,reltol,maxiter,preconditioner)
+        tmpres = linsolve.cheby.single(A,vecB,xinit,reltol,maxiter,preconditioner,eigmax,eigmin)
       } else {
         vecB = Matrix(B[,i],sparse=TRUE)
-        tmpres = linsolve.bicg.single.sparse(A,vecB,xinit,reltol,maxiter,preconditioner)
+        tmpres = linsolve.cheby.single.sparse(A,vecB,xinit,reltol,maxiter,preconditioner,eigmax,eigmin)
       }
-      x[,i]        = tmpres$x
-      iter[i]      = tmpres$iter
-      errors1[[i]] = tmpres$errors1
-      errors2[[i]] = tmpres$errors2
+      x[,i]       = tmpres$x
+      iter[i]     = tmpres$iter
+      errors[[i]] = tmpres$errors
       if (verbose){
-        message(paste("* lsolve.bicg : B's column.",i,"being processed.."))
+        message(paste("* lsolve.cheby : B's column.",i,"being processed.."))
       }
     }
-    res = list("x"=x,"iter"=iter,"errors1"=errors1,"errors2"=errors2)
+    res = list("x"=x,"iter"=iter,"errors"=errors)
   }
 
-  ###########################################################################
-  # Step 3. Finalize
-  if ("flag" %in% names(res)){
-    flagval = res$flag
+  if ("flag"%in%names(res)){
+    flagval = res$flag;
     if (flagval==0){
       if (verbose){
-        message("* lsolve.bicg : convergence well achieved.")
-      }
-    } else if (flagval==1){
-      if (verbose){
-        message("* lsolve.bicg : convergence not achieved within maxiter.")
+        message("* lsolve.cheby : convergence was well achieved.")
       }
     } else {
       if (verbose){
-        message("* lsolve.bicg : breakdown.")
+        message("* lsolve.cheby : convergence was not achieved within maxiter.")
       }
     }
-  }
-  if (verbose){
-    message("* lsolve.bicg : computations finished.")
+    res$flag = NULL
   }
   return(res)
+  if (verbose){
+    message("* lsolve.cheby : computations finished.")
+  }
 }

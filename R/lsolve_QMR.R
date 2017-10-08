@@ -1,11 +1,8 @@
-#' Biconjugate Gradient method
+#' Quasi Minimal Residual Method
 #'
-#' Biconjugate Gradient(BiCG) method is a modification of Conjugate Gradient for nonsymmetric systems using
-#' evaluations with respect to \eqn{A^T} as well as \eqn{A} in matrix-vector multiplications.
-#' For an overdetermined system where \code{nrow(A)>ncol(A)},
-#' it is automatically transformed to the normal equation. Underdetermined system -
-#' \code{nrow(A)<ncol(A)} - is not supported. Preconditioning matrix \eqn{M}, in theory, should be symmetric and positive definite
-#' with fast computability for inverse, though it is not limited until the solver level.
+#' Quasia-Minimal Resudial(QMR) method is another remedy of the BiCG which shows
+#' rather irregular convergence behavior. It adapts to solve the reduced tridiagonal system
+#' in a least squares sense and its convergence is known to be quite smoother than BiCG.
 #'
 #' @param A an \code{(m-by-n)} dense or sparse matrix. See also \code{\link[Matrix]{sparseMatrix}}.
 #' @param B a vector of length \code{m} or an \code{(m-by-k)} matrix (dense or sparse) for solving \code{k} systems simultaneously.
@@ -29,23 +26,24 @@
 #'
 #' out1 = lsolve.cg(A,b)
 #' out2 = lsolve.bicg(A,b)
-#' matout = cbind(matrix(x),out1$x, out2$x);
-#' colnames(matout) = c("true x","CG result", "BiCG result")
+#' out3 = lsolve.qmr(A,b)
+#' matout = cbind(matrix(x),out1$x, out2$x, out3$x);
+#' colnames(matout) = c("true x","CG result", "BiCG result", "QMR result")
 #' print(matout)
-#' @references Fletcher, R. (1976) \emph{Conjugate gradient methods for indefinite systems}, Numerical Analysis, Vol.506:73-89.
-#' @references Voevodin, V. (1983) \emph{The problem of non-self-adjoint generalization of the
-#' conjugate gradient method is closed}, U.S.S.R. Comput. Maths. and Math. Physics., Vol.23:143-144.
-#' @rdname krylov_BICG
+#'
+#' @references Freund, R. and Nachtigal, N. (1991) \emph{QMR : A Quasi-Minimal Residual
+#' Method for Non-Hermitian Linear Systems.} Numer. Math. Vol.60:315-339.
+#' @rdname krylov_QMR
 #' @export
-lsolve.bicg <- function(A,B,xinit=NA,reltol=1e-5,maxiter=10000,
-                        preconditioner=diag(ncol(A)),verbose=TRUE){
+lsolve.qmr <- function(A,B,xinit=NA,reltol=1e-5,maxiter=1000,
+                       preconditioner=diag(ncol(A)),verbose=TRUE){
   ###########################################################################
   # Step 0. Initialization
   if (verbose){
-    message("* lsolve.bicg : Initialiszed.")
+    message("* lsolve.qmr : Initialiszed.")
   }
   if (any(is.na(A))||any(is.infinite(A))||any(is.na(B))||any(is.infinite(B))){
-    stop("* lsolve.bicg : no NA or Inf values allowed.")
+    stop("* lsolve.qmr : no NA or Inf values allowed.")
   }
   sparseformats = c("dgCMatrix","dtCMatrix","dsCMatrix")
   if ((class(A)%in%sparseformats)||(class(B)%in%sparseformats)||(class(preconditioner)%in%sparseformats)){
@@ -68,7 +66,7 @@ lsolve.bicg <- function(A,B,xinit=NA,reltol=1e-5,maxiter=10000,
     xinit = matrix(rnorm(ncol(A)))
   } else {
     if (length(xinit)!=ncol(A)){
-      stop("* lsolve.bicg : 'xinit' has invalid size.")
+      stop("* lsolve.qmr : 'xinit' has invalid size.")
     }
     xinit = matrix(xinit)
   }
@@ -76,19 +74,19 @@ lsolve.bicg <- function(A,B,xinit=NA,reltol=1e-5,maxiter=10000,
   # Step 1. Preprocessing
   # 1-1. Neither NA nor Inf allowed.
   if (any(is.infinite(A))||any(is.na(A))||any(is.infinite(B))||any(is.na(B))){
-    stop("* lsolve.bicg : no NA, Inf, -Inf values are allowed.")
+    stop("* lsolve.qmr : no NA, Inf, -Inf values are allowed.")
   }
   # 1-2. Size Argument
   m = nrow(A)
   if (is.vector(B)){
     mB = length(B)
     if (m!=mB){
-      stop("* lsolve.bicg : a vector B should have a length of nrow(A).")
+      stop("* lsolve.qmr : a vector B should have a length of nrow(A).")
     }
   } else {
     mB = nrow(B)
     if (m!=mB){
-      stop("* lsolve.bicg : an input matrix B should have the same number of rows from A.")
+      stop("* lsolve.qmr : an input matrix B should have the same number of rows from A.")
     }
   }
   if (is.vector(B)){
@@ -99,46 +97,54 @@ lsolve.bicg <- function(A,B,xinit=NA,reltol=1e-5,maxiter=10000,
     B = t(A)%*%B
     A = t(A)%*%A
   } else if (m < ncol(A)){ ## Case 2. Underdetermined
-    stop("* lsolve.bicg : underdetermined case is not supported.")
+    stop("* lsolve.qmr : underdetermined case is not supported.")
   }
   # 1-4. Preconditioner : only valid for square case
   if (!all.equal(dim(A),dim(preconditioner))){
-    stop("* lsolve.bicg : Preconditioner is a size-matching.")
+    stop("* lsolve.qmr : Preconditioner is a size-matching.")
   }
-  if (verbose){message("* lsolve.bicg : preprocessing finished ...")}
+  if (verbose){message("* lsolve.qmr : preprocessing finished ...")}
   ###########################################################################
   # Step 2. Main Computation
   ncolB = ncol(B)
   if (ncolB==1){
+    if (sparseflag){
+      luM = lu(preconditioner)
+      M1 = luM@L
+      M2 = luM@U
+    }
     if (!sparseflag){
       vecB = as.vector(B)
-      res = linsolve.bicg.single(A,vecB,xinit,reltol,maxiter,preconditioner)
+      res = linsolve.qmr.single(A,vecB,xinit,reltol,maxiter,preconditioner)
     } else {
       vecB = B
-      res = linsolve.bicg.single.sparse(A,vecB,xinit,reltol,maxiter,preconditioner)
+      res = linsolve.qmr.single.sparse(A,vecB,xinit,reltol,maxiter,preconditioner,M1,M2)
     }
   } else {
     x      = array(0,c(ncol(A),ncolB))
     iter   = array(0,c(1,ncolB))
-    errors1 = list()
-    errors2 = list()
+    errors = list()
+    if (sparseflag){
+      luM = lu(preconditioner)
+      M1 = luM@L
+      M2 = luM@U
+    }
     for (i in 1:ncolB){
       if (!sparseflag){
         vecB = as.vector(B[,i])
-        tmpres = linsolve.bicg.single(A,vecB,xinit,reltol,maxiter,preconditioner)
+        tmpres = linsolve.qmr.single(A,vecB,xinit,reltol,maxiter,preconditioner)
       } else {
         vecB = Matrix(B[,i],sparse=TRUE)
-        tmpres = linsolve.bicg.single.sparse(A,vecB,xinit,reltol,maxiter,preconditioner)
+        tmpres = linsolve.qmr.single.sparse(A,vecB,xinit,reltol,maxiter,preconditioner,M1,M2)
       }
       x[,i]        = tmpres$x
       iter[i]      = tmpres$iter
-      errors1[[i]] = tmpres$errors1
-      errors2[[i]] = tmpres$errors2
+      errors[[i]]  = tmpres$errors
       if (verbose){
-        message(paste("* lsolve.bicg : B's column.",i,"being processed.."))
+        message(paste("* lsolve.qmr : B's column.",i,"being processed.."))
       }
     }
-    res = list("x"=x,"iter"=iter,"errors1"=errors1,"errors2"=errors2)
+    res = list("x"=x,"iter"=iter,"errors"=errors)
   }
 
   ###########################################################################
@@ -147,20 +153,41 @@ lsolve.bicg <- function(A,B,xinit=NA,reltol=1e-5,maxiter=10000,
     flagval = res$flag
     if (flagval==0){
       if (verbose){
-        message("* lsolve.bicg : convergence well achieved.")
+        message("* lsolve.qmr : convergence well achieved.")
       }
     } else if (flagval==1){
       if (verbose){
-        message("* lsolve.bicg : convergence not achieved within maxiter.")
+        message("* lsolve.qmr : convergence not achieved within maxiter.")
       }
-    } else {
+    } else if (flagval==-1){
       if (verbose){
-        message("* lsolve.bicg : breakdown.")
+        message("* lsolve.qmr : breakdown due to degenerate 'rho' value.")
+      }
+    } else if (flagval==-2){
+      if (verbose){
+        message("* lsolve.qmr : breakdown due to degenerate 'beta' value.")
+      }
+    } else if (flagval==-3){
+      if (verbose){
+        message("* lsolve.qmr : breakdown due to degenerate 'gamma' value.")
+      }
+    } else if (flagval==-4){
+      if (verbose){
+        message("* lsolve.qmr : breakdown due to degenerate 'delta' value.")
+      }
+    } else if (flagval==-5){
+      if (verbose){
+        message("* lsolve.qmr : breakdown due to degenerate 'ep' value.")
+      }
+    } else if (flagval==-6){
+      if (verbose){
+        message("* lsolve.qmr : breakdown due to degenerate 'xi' value.")
       }
     }
+    res$flag = NULL
   }
   if (verbose){
-    message("* lsolve.bicg : computations finished.")
+    message("* lsolve.qmr : computations finished.")
   }
   return(res)
 }

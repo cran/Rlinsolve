@@ -1,6 +1,6 @@
 ---
 title: "Basics of Rlinsolve"
-author: "Vignette Author"
+author: "Kisung You"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -17,15 +17,13 @@ heavily relies on two popular packages, [RcppArmadillo](https://CRAN.R-project.o
 support.
 
 ## Solving **Ax=b** 
-Introducing *RcppArmadillo* simply added computational boost. Let's check by comparing with some basic approaches.
-```{r, echo=F, message=F, warning=F}
+Introducing *RcppArmadillo* simply added computational boost. Let's check by comparing with some basic approaches by simulating *10000* x *500* system matrix for normal equation form.
+```{r, message=F, warning=F}
 library(microbenchmark)
 library(pcg)
 library(optR)
 library(Rlinsolve)
 ```
-
-and simulate *10000* x *500* system matrix for normal equation form.
 ```{r}
 A = matrix(rnorm(10000*50),nrow=10000)
 x = matrix(rnorm(50))

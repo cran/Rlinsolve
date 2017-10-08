@@ -1,4 +1,4 @@
-## ---- echo=F, message=F, warning=F---------------------------------------
+## ---- message=F, warning=F-----------------------------------------------
 library(microbenchmark)
 library(pcg)
 library(optR)

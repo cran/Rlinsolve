@@ -45,6 +45,9 @@ lsolve.cg <- function(A,B,xinit=NA,reltol=1e-5,maxiter=10000,
   if (verbose){
     message("* lsolve.cg : Initialiszed.")
   }
+  if (any(is.na(A))||any(is.infinite(A))||any(is.na(B))||any(is.infinite(B))){
+    stop("* lsolve.cg : no NA or Inf values allowed.")
+  }
   sparseformats = c("dgCMatrix","dtCMatrix","dsCMatrix")
   if ((class(A)%in%sparseformats)||(class(B)%in%sparseformats)||(class(preconditioner)%in%sparseformats)){
     A = Matrix(A,sparse=TRUE)

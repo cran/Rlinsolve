@@ -42,6 +42,9 @@ lsolve.jacobi <- function(A,B,xinit=NA,reltol=1e-5,
   if (verbose){
     message("* lsolve.jacobi : Initialiszed.")
   }
+  if (any(is.na(A))||any(is.infinite(A))||any(is.na(B))||any(is.infinite(B))){
+    stop("* lsolve.jacobi : no NA or Inf values allowed.")
+  }
   # Preprocessing : sparsity
   # http://dirk.eddelbuettel.com/tmp/RcppArmadillo-sparseMatrix.pdf
   sparseformats = c("dgCMatrix","dtCMatrix","dsCMatrix")

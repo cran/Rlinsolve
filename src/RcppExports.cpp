@@ -134,6 +134,110 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// single_cheby
+Rcpp::List single_cheby(const arma::mat& A, const arma::colvec& b, arma::colvec& xinit, const double reltol, const int maxiter, arma::mat& M, const double eigmax, const double eigmin);
+RcppExport SEXP _Rlinsolve_single_cheby(SEXP ASEXP, SEXP bSEXP, SEXP xinitSEXP, SEXP reltolSEXP, SEXP maxiterSEXP, SEXP MSEXP, SEXP eigmaxSEXP, SEXP eigminSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type A(ASEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type b(bSEXP);
+    Rcpp::traits::input_parameter< arma::colvec& >::type xinit(xinitSEXP);
+    Rcpp::traits::input_parameter< const double >::type reltol(reltolSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxiter(maxiterSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type M(MSEXP);
+    Rcpp::traits::input_parameter< const double >::type eigmax(eigmaxSEXP);
+    Rcpp::traits::input_parameter< const double >::type eigmin(eigminSEXP);
+    rcpp_result_gen = Rcpp::wrap(single_cheby(A, b, xinit, reltol, maxiter, M, eigmax, eigmin));
+    return rcpp_result_gen;
+END_RCPP
+}
+// single_cheby_sparse
+Rcpp::List single_cheby_sparse(const arma::sp_mat A, const arma::sp_mat b, arma::colvec& xinit, const double reltol, const int maxiter, arma::sp_mat M, const double eigmax, const double eigmin);
+RcppExport SEXP _Rlinsolve_single_cheby_sparse(SEXP ASEXP, SEXP bSEXP, SEXP xinitSEXP, SEXP reltolSEXP, SEXP maxiterSEXP, SEXP MSEXP, SEXP eigmaxSEXP, SEXP eigminSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::sp_mat >::type A(ASEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat >::type b(bSEXP);
+    Rcpp::traits::input_parameter< arma::colvec& >::type xinit(xinitSEXP);
+    Rcpp::traits::input_parameter< const double >::type reltol(reltolSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxiter(maxiterSEXP);
+    Rcpp::traits::input_parameter< arma::sp_mat >::type M(MSEXP);
+    Rcpp::traits::input_parameter< const double >::type eigmax(eigmaxSEXP);
+    Rcpp::traits::input_parameter< const double >::type eigmin(eigminSEXP);
+    rcpp_result_gen = Rcpp::wrap(single_cheby_sparse(A, b, xinit, reltol, maxiter, M, eigmax, eigmin));
+    return rcpp_result_gen;
+END_RCPP
+}
+// single_gmres
+Rcpp::List single_gmres(const arma::mat& A, const arma::colvec& b, arma::colvec& xinit, const double reltol, const int maxiter, arma::mat& M, const int restrt);
+RcppExport SEXP _Rlinsolve_single_gmres(SEXP ASEXP, SEXP bSEXP, SEXP xinitSEXP, SEXP reltolSEXP, SEXP maxiterSEXP, SEXP MSEXP, SEXP restrtSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type A(ASEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type b(bSEXP);
+    Rcpp::traits::input_parameter< arma::colvec& >::type xinit(xinitSEXP);
+    Rcpp::traits::input_parameter< const double >::type reltol(reltolSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxiter(maxiterSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type M(MSEXP);
+    Rcpp::traits::input_parameter< const int >::type restrt(restrtSEXP);
+    rcpp_result_gen = Rcpp::wrap(single_gmres(A, b, xinit, reltol, maxiter, M, restrt));
+    return rcpp_result_gen;
+END_RCPP
+}
+// single_gmres_sparse
+Rcpp::List single_gmres_sparse(const arma::sp_mat A, const arma::sp_mat b, arma::colvec& xinit, const double reltol, const int maxiter, arma::sp_mat M, const int restrt);
+RcppExport SEXP _Rlinsolve_single_gmres_sparse(SEXP ASEXP, SEXP bSEXP, SEXP xinitSEXP, SEXP reltolSEXP, SEXP maxiterSEXP, SEXP MSEXP, SEXP restrtSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::sp_mat >::type A(ASEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat >::type b(bSEXP);
+    Rcpp::traits::input_parameter< arma::colvec& >::type xinit(xinitSEXP);
+    Rcpp::traits::input_parameter< const double >::type reltol(reltolSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxiter(maxiterSEXP);
+    Rcpp::traits::input_parameter< arma::sp_mat >::type M(MSEXP);
+    Rcpp::traits::input_parameter< const int >::type restrt(restrtSEXP);
+    rcpp_result_gen = Rcpp::wrap(single_gmres_sparse(A, b, xinit, reltol, maxiter, M, restrt));
+    return rcpp_result_gen;
+END_RCPP
+}
+// single_qmr
+Rcpp::List single_qmr(const arma::mat& A, const arma::colvec& b, arma::colvec& xinit, const double reltol, const int maxiter, const arma::mat& M);
+RcppExport SEXP _Rlinsolve_single_qmr(SEXP ASEXP, SEXP bSEXP, SEXP xinitSEXP, SEXP reltolSEXP, SEXP maxiterSEXP, SEXP MSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::mat& >::type A(ASEXP);
+    Rcpp::traits::input_parameter< const arma::colvec& >::type b(bSEXP);
+    Rcpp::traits::input_parameter< arma::colvec& >::type xinit(xinitSEXP);
+    Rcpp::traits::input_parameter< const double >::type reltol(reltolSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxiter(maxiterSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type M(MSEXP);
+    rcpp_result_gen = Rcpp::wrap(single_qmr(A, b, xinit, reltol, maxiter, M));
+    return rcpp_result_gen;
+END_RCPP
+}
+// single_qmr_sparse
+Rcpp::List single_qmr_sparse(const arma::sp_mat A, const arma::sp_mat b, arma::colvec& xinit, const double reltol, const int maxiter, const arma::sp_mat M, const arma::sp_mat M1, const arma::sp_mat M2);
+RcppExport SEXP _Rlinsolve_single_qmr_sparse(SEXP ASEXP, SEXP bSEXP, SEXP xinitSEXP, SEXP reltolSEXP, SEXP maxiterSEXP, SEXP MSEXP, SEXP M1SEXP, SEXP M2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::sp_mat >::type A(ASEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat >::type b(bSEXP);
+    Rcpp::traits::input_parameter< arma::colvec& >::type xinit(xinitSEXP);
+    Rcpp::traits::input_parameter< const double >::type reltol(reltolSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxiter(maxiterSEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat >::type M(MSEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat >::type M1(M1SEXP);
+    Rcpp::traits::input_parameter< const arma::sp_mat >::type M2(M2SEXP);
+    rcpp_result_gen = Rcpp::wrap(single_qmr_sparse(A, b, xinit, reltol, maxiter, M, M1, M2));
+    return rcpp_result_gen;
+END_RCPP
+}
 // single_gs
 Rcpp::List single_gs(const arma::mat& A, const arma::colvec& b, arma::colvec& xinit, const double reltol, const int maxiter, const int dflagval);
 RcppExport SEXP _Rlinsolve_single_gs(SEXP ASEXP, SEXP bSEXP, SEXP xinitSEXP, SEXP reltolSEXP, SEXP maxiterSEXP, SEXP dflagvalSEXP) {
@@ -272,6 +376,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_Rlinsolve_single_cg_sparse", (DL_FUNC) &_Rlinsolve_single_cg_sparse, 6},
     {"_Rlinsolve_single_cgs", (DL_FUNC) &_Rlinsolve_single_cgs, 6},
     {"_Rlinsolve_single_cgs_sparse", (DL_FUNC) &_Rlinsolve_single_cgs_sparse, 6},
+    {"_Rlinsolve_single_cheby", (DL_FUNC) &_Rlinsolve_single_cheby, 8},
+    {"_Rlinsolve_single_cheby_sparse", (DL_FUNC) &_Rlinsolve_single_cheby_sparse, 8},
+    {"_Rlinsolve_single_gmres", (DL_FUNC) &_Rlinsolve_single_gmres, 7},
+    {"_Rlinsolve_single_gmres_sparse", (DL_FUNC) &_Rlinsolve_single_gmres_sparse, 7},
+    {"_Rlinsolve_single_qmr", (DL_FUNC) &_Rlinsolve_single_qmr, 6},
+    {"_Rlinsolve_single_qmr_sparse", (DL_FUNC) &_Rlinsolve_single_qmr_sparse, 8},
     {"_Rlinsolve_single_gs", (DL_FUNC) &_Rlinsolve_single_gs, 6},
     {"_Rlinsolve_single_gs_sparse", (DL_FUNC) &_Rlinsolve_single_gs_sparse, 6},
     {"_Rlinsolve_single_jacobi", (DL_FUNC) &_Rlinsolve_single_jacobi, 6},

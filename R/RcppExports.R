@@ -51,6 +51,42 @@ linsolve.cgs.single.sparse <- function(A, b, xinit, reltol, maxiter, M) {
 
 #' @keywords internal
 #' @noRd
+linsolve.cheby.single <- function(A, b, xinit, reltol, maxiter, M, eigmax, eigmin) {
+    .Call(`_Rlinsolve_single_cheby`, A, b, xinit, reltol, maxiter, M, eigmax, eigmin)
+}
+
+#' @keywords internal
+#' @noRd
+linsolve.cheby.single.sparse <- function(A, b, xinit, reltol, maxiter, M, eigmax, eigmin) {
+    .Call(`_Rlinsolve_single_cheby_sparse`, A, b, xinit, reltol, maxiter, M, eigmax, eigmin)
+}
+
+#' @keywords internal
+#' @noRd
+linsolve.gmres.single <- function(A, b, xinit, reltol, maxiter, M, restrt) {
+    .Call(`_Rlinsolve_single_gmres`, A, b, xinit, reltol, maxiter, M, restrt)
+}
+
+#' @keywords internal
+#' @noRd
+linsolve.gmres.single.sparse <- function(A, b, xinit, reltol, maxiter, M, restrt) {
+    .Call(`_Rlinsolve_single_gmres_sparse`, A, b, xinit, reltol, maxiter, M, restrt)
+}
+
+#' @keywords internal
+#' @noRd
+linsolve.qmr.single <- function(A, b, xinit, reltol, maxiter, M) {
+    .Call(`_Rlinsolve_single_qmr`, A, b, xinit, reltol, maxiter, M)
+}
+
+#' @keywords internal
+#' @noRd
+linsolve.qmr.single.sparse <- function(A, b, xinit, reltol, maxiter, M, M1, M2) {
+    .Call(`_Rlinsolve_single_qmr_sparse`, A, b, xinit, reltol, maxiter, M, M1, M2)
+}
+
+#' @keywords internal
+#' @noRd
 linsolve.gs.single <- function(A, b, xinit, reltol, maxiter, dflagval) {
     .Call(`_Rlinsolve_single_gs`, A, b, xinit, reltol, maxiter, dflagval)
 }

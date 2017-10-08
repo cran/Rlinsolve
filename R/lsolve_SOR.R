@@ -44,6 +44,9 @@ lsolve.sor <- function(A,B,xinit=NA,reltol=1e-5,maxiter=1000,w=1,adjsym=TRUE,ver
   if (verbose){
     message("* lsolve.sor : Initialiszed.")
   }
+  if (any(is.na(A))||any(is.infinite(A))||any(is.na(B))||any(is.infinite(B))){
+    stop("* lsolve.sor : no NA or Inf values allowed.")
+  }
   # Preprocessing : sparsity
   # http://dirk.eddelbuettel.com/tmp/RcppArmadillo-sparseMatrix.pdf
   sparseformats = c("dgCMatrix","dtCMatrix","dsCMatrix")

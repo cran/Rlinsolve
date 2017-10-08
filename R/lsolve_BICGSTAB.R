@@ -46,6 +46,9 @@ lsolve.bicgstab <- function(A,B,xinit=NA,reltol=1e-5,maxiter=1000,
   if (verbose){
     message("* lsolve.bicgstab : Initialiszed.")
   }
+  if (any(is.na(A))||any(is.infinite(A))||any(is.na(B))||any(is.infinite(B))){
+    stop("* lsolve.bicgstab : no NA or Inf values allowed.")
+  }
   sparseformats = c("dgCMatrix","dtCMatrix","dsCMatrix")
   if ((class(A)%in%sparseformats)||(class(B)%in%sparseformats)||(class(preconditioner)%in%sparseformats)){
     A = Matrix(A,sparse=TRUE)
@@ -123,10 +126,10 @@ lsolve.bicgstab <- function(A,B,xinit=NA,reltol=1e-5,maxiter=1000,
     for (i in 1:ncolB){
       if (!sparseflag){
         vecB = as.vector(B[,i])
-        tmpres = linsolve.bicg.single(A,vecB,xinit,reltol,maxiter,preconditioner)
+        tmpres = linsolve.bicgstab.single(A,vecB,xinit,reltol,maxiter,preconditioner)
       } else {
         vecB = Matrix(B[,i],sparse=TRUE)
-        tmpres = linsolve.bicg.single.sparse(A,vecB,xinit,reltol,maxiter,preconditioner)
+        tmpres = linsolve.bicgstab.single.sparse(A,vecB,xinit,reltol,maxiter,preconditioner)
       }
       x[,i]        = tmpres$x
       iter[i]      = tmpres$iter
@@ -152,7 +155,7 @@ lsolve.bicgstab <- function(A,B,xinit=NA,reltol=1e-5,maxiter=1000,
       }
     } else {
       if (verbose){
-        message("* lsolve.bicg : breakdown.")
+        message("* lsolve.bicgstab : breakdown.")
       }
     }
     res$flag = NULL

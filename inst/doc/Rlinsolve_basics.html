@@ -10,9 +10,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<meta name="author" content="Vignette Author" />
+<meta name="author" content="Kisung You" />
 
-<meta name="date" content="2017-09-28" />
+<meta name="date" content="2017-10-07" />
 
 <title>Basics of Rlinsolve</title>
 
@@ -69,8 +69,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 <h1 class="title toc-ignore">Basics of Rlinsolve</h1>
-<h4 class="author"><em>Vignette Author</em></h4>
-<h4 class="date"><em>2017-09-28</em></h4>
+<h4 class="author"><em>Kisung You</em></h4>
+<h4 class="date"><em>2017-10-07</em></h4>
 
 
 
@@ -80,8 +80,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="solving-axb" class="section level2">
 <h2>Solving <strong>Ax=b</strong></h2>
-<p>Introducing <em>RcppArmadillo</em> simply added computational boost. Let’s check by comparing with some basic approaches.</p>
-<p>and simulate <em>10000</em> x <em>500</em> system matrix for normal equation form.</p>
+<p>Introducing <em>RcppArmadillo</em> simply added computational boost. Let’s check by comparing with some basic approaches by simulating <em>10000</em> x <em>500</em> system matrix for normal equation form.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(microbenchmark)
+<span class="kw">library</span>(pcg)
+<span class="kw">library</span>(optR)
+<span class="kw">library</span>(Rlinsolve)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">A =<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(<span class="dv">10000</span>*<span class="dv">50</span>),<span class="dt">nrow=</span><span class="dv">10000</span>)
 x =<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">rnorm</span>(<span class="dv">50</span>))
 b =<span class="st"> </span>A%*%x</code></pre></div>
@@ -91,8 +94,8 @@ Anormal =<span class="st"> </span><span class="kw">t</span>(A)%*%A
 bnormal =<span class="st"> </span><span class="kw">t</span>(A)%*%b
 <span class="kw">microbenchmark</span>(<span class="kw">solve</span>(Anormal,bnormal))</code></pre></div>
 <pre><code>## Unit: microseconds
-##                     expr    min      lq     mean  median      uq     max
-##  solve(Anormal, bnormal) 75.297 76.0715 81.21024 76.4845 77.1555 443.356
+##                     expr    min      lq     mean median     uq     max
+##  solve(Anormal, bnormal) 78.325 81.8975 87.49633 82.531 83.527 499.605
 ##  neval
 ##    100</code></pre>
 <p>Let’s compare other available packages(<code>pcg</code> and <code>optR</code>) and their computation time,</p>
@@ -100,23 +103,23 @@ bnormal =<span class="st"> </span><span class="kw">t</span>(A)%*%b
                <span class="kw">optR</span>(A,b,<span class="dt">method=</span><span class="st">&quot;gauss&quot;</span>),
                <span class="dt">times=</span><span class="dv">10</span>)</code></pre></div>
 <pre><code>## Unit: microseconds
-##                          expr        min         lq       mean     median
-##         pcg(Anormal, bnormal)    176.393    197.616   1684.421    210.376
-##  optR(A, b, method = &quot;gauss&quot;) 135359.688 135852.412 160230.685 136611.512
+##                          expr        min         lq     mean     median
+##         pcg(Anormal, bnormal)    176.942    180.905   1699.8    204.992
+##  optR(A, b, method = &quot;gauss&quot;) 124439.352 125070.702 148178.9 127928.057
 ##          uq       max neval
-##     238.435  14805.32    10
-##  144393.710 276537.06    10</code></pre>
+##     212.599  15077.92    10
+##  131852.394 260476.41    10</code></pre>
 <p>Finally, let’s test two functions in our package, <em>lsolve.bicgstab</em> and <em>lsolve.sor</em>,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">microbenchmark</span>(<span class="kw">lsolve.sor</span>(A,b,<span class="dt">verbose=</span><span class="ot">FALSE</span>),
                <span class="kw">lsolve.bicgstab</span>(A,b,<span class="dt">verbose=</span><span class="ot">FALSE</span>),
                <span class="dt">times=</span><span class="dv">10</span>)</code></pre></div>
 <pre><code>## Unit: milliseconds
 ##                                    expr      min       lq     mean
-##       lsolve.sor(A, b, verbose = FALSE) 26.21710 27.14054 39.49382
-##  lsolve.bicgstab(A, b, verbose = FALSE) 26.71988 27.49502 31.83477
-##    median       uq       max neval
-##  27.87296 30.05976 101.44159    10
-##  27.85354 28.14653  68.45279    10</code></pre>
+##       lsolve.sor(A, b, verbose = FALSE) 21.19073 21.93595 27.70857
+##  lsolve.bicgstab(A, b, verbose = FALSE) 22.27486 22.49040 26.41073
+##    median       uq      max neval
+##  22.74821 24.72226 66.97025    10
+##  23.15536 23.68600 56.83389    10</code></pre>
 <p>where we can witness that our codes are definitely faster by at least several folds.</p>
 </div>
 <div id="solving-axb-with-sparse-a" class="section level2">
@@ -133,13 +136,13 @@ b =<span class="st"> </span>Pdense %*%<span class="st"> </span>x</code></pre></d
                <span class="dt">times=</span><span class="dv">10</span>)</code></pre></div>
 <pre><code>## Unit: microseconds
 ##                               expr       min        lq       mean
-##                   solve(Pdense, b)   283.198   290.888   329.1776
-##  optR(Pdense, b, method = &quot;gauss&quot;) 72135.468 73038.835 75592.4082
-##                     pcg(Pdense, b)   933.511   969.669  1032.7257
+##                   solve(Pdense, b)   238.379   244.152   264.7912
+##  optR(Pdense, b, method = &quot;gauss&quot;) 56443.788 56734.605 58115.9259
+##                     pcg(Pdense, b)   733.741   758.646   825.7333
 ##      median        uq       max neval
-##    323.8145   362.320   413.387    10
-##  74830.3290 78222.845 80787.320    10
-##    998.1805  1047.926  1354.509    10</code></pre>
+##    257.6550   264.911   347.933    10
+##  56915.9395 57821.605 66459.789    10
+##    785.2585   788.458  1249.490    10</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">microbenchmark</span>(<span class="kw">lsolve.bicg</span>(Psparse,b,<span class="dt">verbose=</span><span class="ot">FALSE</span>),
                <span class="kw">lsolve.cgs</span>(Psparse,b,<span class="dt">verbose=</span><span class="ot">FALSE</span>),
                <span class="kw">lsolve.gs</span>(Psparse,b,<span class="dt">verbose=</span><span class="ot">FALSE</span>),
@@ -147,15 +150,15 @@ b =<span class="st"> </span>Pdense %*%<span class="st"> </span>x</code></pre></d
                <span class="dt">times=</span><span class="dv">10</span>)</code></pre></div>
 <pre><code>## Unit: milliseconds
 ##                                      expr      min       lq     mean
-##  lsolve.bicg(Psparse, b, verbose = FALSE) 20.78553 21.51531 26.53134
-##   lsolve.cgs(Psparse, b, verbose = FALSE) 16.83871 17.30754 22.38803
-##    lsolve.gs(Psparse, b, verbose = FALSE) 19.01142 31.26858 39.28202
-##   lsolve.sor(Psparse, b, verbose = FALSE) 16.36028 27.79556 30.34358
+##  lsolve.bicg(Psparse, b, verbose = FALSE) 16.11628 17.44843 21.20758
+##   lsolve.cgs(Psparse, b, verbose = FALSE) 13.06897 13.20903 23.71067
+##    lsolve.gs(Psparse, b, verbose = FALSE) 12.16514 19.67327 26.33566
+##   lsolve.sor(Psparse, b, verbose = FALSE) 14.24851 18.29322 23.58357
 ##    median       uq      max neval
-##  22.12720 22.95007 66.70662    10
-##  17.45886 19.57789 63.03436    10
-##  32.95994 34.44790 78.12849    10
-##  31.61104 35.10524 38.86998    10</code></pre>
+##  17.66852 18.25845 51.71854    10
+##  14.07305 17.32506 68.83595    10
+##  21.32276 27.33819 71.31194    10
+##  23.34910 24.53429 43.74753    10</code></pre>
 <p>where in our case, supporting sparse matrices have shown much superior results. Note that the size has been set to be small since dense solvers are too slow to be manageably visible.</p>
 </div>
 
