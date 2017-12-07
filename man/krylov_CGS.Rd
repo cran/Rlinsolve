@@ -53,3 +53,6 @@ colnames(matout) = c("true x","CG result", "CGS result")
 print(matout)
 
 }
+\references{
+\insertRef{sonneveld_cgs_1989}{Rlinsolve}
+}

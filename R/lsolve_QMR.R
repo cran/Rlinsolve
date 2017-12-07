@@ -31,8 +31,9 @@
 #' colnames(matout) = c("true x","CG result", "BiCG result", "QMR result")
 #' print(matout)
 #'
-#' @references Freund, R. and Nachtigal, N. (1991) \emph{QMR : A Quasi-Minimal Residual
-#' Method for Non-Hermitian Linear Systems.} Numer. Math. Vol.60:315-339.
+#' @references
+#' \insertRef{freund_qmr:_1991}{Rlinsolve}
+#'
 #' @rdname krylov_QMR
 #' @export
 lsolve.qmr <- function(A,B,xinit=NA,reltol=1e-5,maxiter=1000,

@@ -51,7 +51,8 @@ print("* lsolve.jacobi : overdetermined case example")
 print(paste("*   error for unweighted    Jacobi case : ",norm(out1$x-x)))
 print(paste("*   error for 0.66 weighted Jacobi case : ",norm(out2$x-x)))
 print(paste("*   error for 0.50 weighted Jacobi case : ",norm(out3$x-x)))
+
 }
 \references{
-Demmel, J.W. (1997) \emph{Applied Numerical Linear Algebra, 1st ed.}, SIAM.
+\insertRef{demmel_applied_1997}{Rlinsolve}
 }

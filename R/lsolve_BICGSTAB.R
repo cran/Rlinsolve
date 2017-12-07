@@ -35,8 +35,9 @@
 #' print(matout)
 #'
 #'
-#' @references Van der Vorst, H. A. (1992) \emph{Bi-CGSTAB : A Fast and Smoothly Converging Variant of Bi-CG for the Solution of
-#' Nonsymmetric Linear Systems.} SIAM J. Sci. and Stat. Compute. Vol.13(2):631-644.
+#' @references
+#' \insertRef{van_der_vorst_bi-cgstab:_1992}{Rlinsolve}
+#'
 #' @rdname krylov_BICGSTAB
 #' @export
 lsolve.bicgstab <- function(A,B,xinit=NA,reltol=1e-5,maxiter=1000,

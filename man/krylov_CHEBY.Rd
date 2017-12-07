@@ -50,5 +50,5 @@ print(matout)
 
 }
 \references{
-Gutknecht, M. and Rollin, S. (2002) \emph{The Chebyshev iteration revisited}. Parallel Computing, Vol.28(2):263-283.
+\insertRef{gutknecht_chebyshev_2002}{Rlinsolve}
 }

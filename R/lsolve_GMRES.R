@@ -33,7 +33,10 @@
 #' print(matout)
 #'
 #'
-#' @references Saad, Y. and Schultz, M.H. (1986) \emph{GMRES: A generealized minimal residual algorithm for solving nonsymmetric linear systems.} SIAM J. Sci. Stat. Comput. Vol.7:859-869.
+#' @references
+#' \insertRef{saad_gmres:_1986}{Rlinsolve}
+#'
+#'
 #' @rdname krylov_GMRES
 #' @export
 lsolve.gmres <- function(A,B,xinit=NA,reltol=1e-5,maxiter=1000,

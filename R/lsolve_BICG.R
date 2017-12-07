@@ -32,9 +32,12 @@
 #' matout = cbind(matrix(x),out1$x, out2$x);
 #' colnames(matout) = c("true x","CG result", "BiCG result")
 #' print(matout)
-#' @references Fletcher, R. (1976) \emph{Conjugate gradient methods for indefinite systems}, Numerical Analysis, Vol.506:73-89.
-#' @references Voevodin, V. (1983) \emph{The problem of non-self-adjoint generalization of the
-#' conjugate gradient method is closed}, U.S.S.R. Comput. Maths. and Math. Physics., Vol.23:143-144.
+#'
+#' @references
+#' \insertRef{watson_conjugate_1976}{Rlinsolve}
+#'
+#' \insertRef{voevodin_question_1983}{Rlinsolve}
+#'
 #' @rdname krylov_BICG
 #' @export
 lsolve.bicg <- function(A,B,xinit=NA,reltol=1e-5,maxiter=10000,

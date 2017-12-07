@@ -54,5 +54,5 @@ print(matout)
 
 }
 \references{
-Straeter, T. A. (2011) \emph{On the Extension of the Davidon-Broyden Class of Rank One, Quasi-Newton Minimization Methods to an Infinite Dimensional Hilbert Space with Applications to Optimal Control Problems.} NASA Technical Reports Server. NASA.
+\insertRef{hestenes_methods_1952}{Rlinsolve}
 }

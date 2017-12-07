@@ -35,7 +35,9 @@
 #' colnames(matout) = c("true x","SSOR result", "CG result")
 #' print(matout)
 #'
-#' @references Straeter, T. A. (2011) \emph{On the Extension of the Davidon-Broyden Class of Rank One, Quasi-Newton Minimization Methods to an Infinite Dimensional Hilbert Space with Applications to Optimal Control Problems.} NASA Technical Reports Server. NASA.
+#' @references
+#' \insertRef{hestenes_methods_1952}{Rlinsolve}
+#'
 #' @rdname krylov_CG
 #' @export
 lsolve.cg <- function(A,B,xinit=NA,reltol=1e-5,maxiter=10000,

@@ -36,7 +36,8 @@
 #' colnames(matout) = c("true x","SSOR w=1", "SSOR w=0.5", "SSOR w=1.5")
 #' print(matout)
 #'
-#' @references Demmel, J.W. (1997) \emph{Applied Numerical Linear Algebra, 1st ed.}, SIAM.
+#' @references
+#' \insertRef{demmel_applied_1997}{Rlinsolve}
 #' @rdname basic_SSOR
 #' @export
 lsolve.ssor <- function(A,B,xinit=NA,reltol=1e-5,maxiter=1000,w=1,adjsym=TRUE,verbose=TRUE){

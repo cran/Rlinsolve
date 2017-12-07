@@ -49,6 +49,5 @@ print(matout)
 
 }
 \references{
-Freund, R. and Nachtigal, N. (1991) \emph{QMR : A Quasi-Minimal Residual
-Method for Non-Hermitian Linear Systems.} Numer. Math. Vol.60:315-339.
+\insertRef{freund_qmr:_1991}{Rlinsolve}
 }

@@ -50,5 +50,5 @@ print(matout)
 
 }
 \references{
-Demmel, J.W. (1997) \emph{Applied Numerical Linear Algebra, 1st ed.}, SIAM.
+\insertRef{demmel_applied_1997}{Rlinsolve}
 }

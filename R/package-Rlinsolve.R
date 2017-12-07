@@ -12,7 +12,7 @@
 #' \strong{squared} if \code{m=n}. In the current version, underdetermined system is
 #' not supported; it will later appear with sparse constraints. For an overdetermined system,
 #' it automatically transforms the problem into \emph{normal equation}, i.e.,
-#' \deqn{Ax=b \rightarrow A^T Ax = A^b}
+#' \deqn{Ax=b \rightarrow A^T Ax = A^T b}
 #' even though if suffers from worse condition number while having desirable property
 #' of a system to be symmetric and positive definite.
 #'

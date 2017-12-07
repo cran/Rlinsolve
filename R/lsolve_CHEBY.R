@@ -31,7 +31,9 @@
 #' colnames(matout) = c("original x","SOR result", "Chebyshev result")
 #' print(matout)
 #'
-#' @references Gutknecht, M. and Rollin, S. (2002) \emph{The Chebyshev iteration revisited}. Parallel Computing, Vol.28(2):263-283.
+#' @references
+#' \insertRef{gutknecht_chebyshev_2002}{Rlinsolve}
+#'
 #' @rdname krylov_CHEBY
 #' @export
 lsolve.cheby <- function(A,B,xinit=NA,reltol=1e-5,maxiter=10000,

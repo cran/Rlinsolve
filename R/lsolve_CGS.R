@@ -35,6 +35,9 @@
 #' colnames(matout) = c("true x","CG result", "CGS result")
 #' print(matout)
 #'
+#' @references
+#' \insertRef{sonneveld_cgs_1989}{Rlinsolve}
+#'
 #' @rdname krylov_CGS
 #' @export
 lsolve.cgs <- function(A,B,xinit=NA,reltol=1e-5,maxiter=10000,
