@@ -8,11 +8,11 @@ lsolve.gs(A, B, xinit = NA, reltol = 1e-05, maxiter = 1000,
   adjsym = TRUE, verbose = TRUE)
 }
 \arguments{
-\item{A}{an \code{(m-by-n)} dense or sparse matrix. See also \code{\link[Matrix]{sparseMatrix}}.}
+\item{A}{an \eqn{(m\times n)} dense or sparse matrix. See also \code{\link[Matrix]{sparseMatrix}}.}
 
-\item{B}{a vector of length \code{m} or an \code{(m-by-k)} matrix (dense or sparse) for solving \code{k} systems simultaneously.}
+\item{B}{a vector of length \eqn{m} or an \eqn{(m\times k)} matrix (dense or sparse) for solving \eqn{k} systems simultaneously.}
 
-\item{xinit}{a length-\code{n} vector for initial starting point. \code{NA} to start from a random initial point near 0.}
+\item{xinit}{a length-\eqn{n} vector for initial starting point. \code{NA} to start from a random initial point near 0.}
 
 \item{reltol}{tolerance level for stopping iterations.}
 
@@ -24,7 +24,7 @@ lsolve.gs(A, B, xinit = NA, reltol = 1e-05, maxiter = 1000,
 }
 \value{
 a named list containing \describe{
-\item{x}{a solution of length \code{n}.}
+\item{x}{solution; a vector of length \eqn{n} or a matrix of size \eqn{(n\times k)}.}
 \item{iter}{the number of iterations required.}
 \item{errors}{a vector of errors for stopping criterion.}
 }
