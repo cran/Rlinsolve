@@ -20,9 +20,7 @@
 #' \pkg{RcppArmadillo} is extensively used in the package. In order for
 #' bullet-proof transition between dense and sparse matrix, only 3 of
 #' 12 RcppArmadillo-supported sparse matrix formats have access to
-#' our algorithms; \code{"dgCMatrix"},\code{"dtCMatrix"} and \code{"dsCMatrix"}.
-#' Please see \href{http://dirk.eddelbuettel.com/tmp/RcppArmadillo-sparseMatrix.pdf}{Dirk Eddelbuettel}'s
-#' posting on sparse matrix support from RcppArmadillo. If either of two inputs \code{A} or \code{b} is
+#' our algorithms; \code{"dgCMatrix"},\code{"dtCMatrix"} and \code{"dsCMatrix"}. If either of two inputs \code{A} or \code{b} is
 #' sparse, all matrices involved are automatically transformed into sparse matrices.
 #'
 #'
