@@ -3,7 +3,6 @@
 \docType{package}
 \name{Rlinsolve}
 \alias{Rlinsolve}
-\alias{Rlinsolve-package}
 \title{A Collection of Iterative Solvers for (Sparse) Linear System of Equations}
 \description{
 Solving a system of linear equations is one of the most fundamental
@@ -29,7 +28,9 @@ of a system to be symmetric and positive definite.
 \pkg{RcppArmadillo} is extensively used in the package. In order for
 bullet-proof transition between dense and sparse matrix, only 3 of
 12 RcppArmadillo-supported sparse matrix formats have access to
-our algorithms; \code{"dgCMatrix"},\code{"dtCMatrix"} and \code{"dsCMatrix"}. If either of two inputs \code{A} or \code{b} is
+our algorithms; \code{"dgCMatrix"},\code{"dtCMatrix"} and \code{"dsCMatrix"}.
+Please see \href{https://CRAN.R-project.org/package=RcppArmadillo/vignettes/RcppArmadillo-sparseMatrix.pdf}{the vignette}
+on sparse matrix support from RcppArmadillo. If either of two inputs \code{A} or \code{b} is
 sparse, all matrices involved are automatically transformed into sparse matrices.
 }
 

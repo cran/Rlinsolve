@@ -4,8 +4,15 @@
 \alias{lsolve.bicg}
 \title{Biconjugate Gradient method}
 \usage{
-lsolve.bicg(A, B, xinit = NA, reltol = 1e-05, maxiter = 10000,
-  preconditioner = diag(ncol(A)), verbose = TRUE)
+lsolve.bicg(
+  A,
+  B,
+  xinit = NA,
+  reltol = 1e-05,
+  maxiter = 10000,
+  preconditioner = diag(ncol(A)),
+  verbose = TRUE
+)
 }
 \arguments{
 \item{A}{an \eqn{(m\times n)} dense or sparse matrix. See also \code{\link[Matrix]{sparseMatrix}}.}
@@ -39,6 +46,7 @@ with fast computability for inverse, though it is not limited until the solver l
 }
 \examples{
 ## Overdetermined System
+set.seed(100)
 A = matrix(rnorm(10*5),nrow=10)
 x = rnorm(5)
 b = A\%*\%x

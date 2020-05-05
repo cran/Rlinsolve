@@ -20,7 +20,9 @@
 #' \pkg{RcppArmadillo} is extensively used in the package. In order for
 #' bullet-proof transition between dense and sparse matrix, only 3 of
 #' 12 RcppArmadillo-supported sparse matrix formats have access to
-#' our algorithms; \code{"dgCMatrix"},\code{"dtCMatrix"} and \code{"dsCMatrix"}. If either of two inputs \code{A} or \code{b} is
+#' our algorithms; \code{"dgCMatrix"},\code{"dtCMatrix"} and \code{"dsCMatrix"}.
+#' Please see \href{https://CRAN.R-project.org/package=RcppArmadillo/vignettes/RcppArmadillo-sparseMatrix.pdf}{the vignette}
+#' on sparse matrix support from RcppArmadillo. If either of two inputs \code{A} or \code{b} is
 #' sparse, all matrices involved are automatically transformed into sparse matrices.
 #'
 #'
@@ -49,10 +51,11 @@
 #' @references Barrett, R., Berry, M., Chan, T.F., Demmel, J., Donato, J., Dongarra, J.,
 #' Eijkhout, V., Pozo, R., Romine, C., and van der Vorst, H. (1994) \emph{Templates for the Solution
 #' of Linear Systems: Building Blocks for Iterative Methods, 2nd ed.} Philadelphia, SIAM.
+#' 
 #' @docType package
 #' @name Rlinsolve
 #' @import Matrix
-#' @import bigmemory
+#' @importFrom utils packageVersion
 #' @importFrom stats rnorm
 #' @importFrom Rcpp evalCpp
 #' @useDynLib Rlinsolve, .registration=TRUE
