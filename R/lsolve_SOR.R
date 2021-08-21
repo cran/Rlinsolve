@@ -50,7 +50,7 @@ lsolve.sor <- function(A,B,xinit=NA,reltol=1e-5,maxiter=1000,w=1,adjsym=TRUE,ver
     stop("* lsolve.sor : no NA or Inf values allowed.")
   }
   # Preprocessing : sparsity
-  # http://dirk.eddelbuettel.com/tmp/RcppArmadillo-sparseMatrix.pdf
+  # https://dirk.eddelbuettel.com/tmp/RcppArmadillo-sparseMatrix.pdf
   sparseformats = c("dgCMatrix","dtCMatrix","dsCMatrix")
   if (aux.is.sparse(A)||aux.is.sparse(B)){
     A = Matrix(A,sparse=TRUE)

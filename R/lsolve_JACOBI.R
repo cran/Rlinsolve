@@ -50,7 +50,7 @@ lsolve.jacobi <- function(A,B,xinit=NA,reltol=1e-5,
     stop("* lsolve.jacobi : no NA or Inf values allowed.")
   }
   # Preprocessing : sparsity
-  # http://dirk.eddelbuettel.com/tmp/RcppArmadillo-sparseMatrix.pdf
+  # https://dirk.eddelbuettel.com/tmp/RcppArmadillo-sparseMatrix.pdf
   sparseformats = c("dgCMatrix","dtCMatrix","dsCMatrix")
   if (aux.is.sparse(A)||aux.is.sparse(B)){
     A = Matrix(A,sparse=TRUE)

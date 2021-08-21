@@ -44,7 +44,7 @@ lsolve.gs <- function(A,B,xinit=NA,reltol=1e-5,maxiter=1000,adjsym=TRUE,verbose=
   }
 
   # Preprocessing : sparsity
-  # http://dirk.eddelbuettel.com/tmp/RcppArmadillo-sparseMatrix.pdf
+  # https://dirk.eddelbuettel.com/tmp/RcppArmadillo-sparseMatrix.pdf
   sparseformats = c("dgCMatrix","dtCMatrix","dsCMatrix")
   if (aux.is.sparse(A)||aux.is.sparse(B)){
     A = Matrix::Matrix(A,sparse=TRUE)
